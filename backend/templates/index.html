@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GIS Vector Data System</title>
+
+    <link rel="stylesheet"
+          href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        #map {
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script>
+        const map = L.map('map').setView([55.7963, 37.9382], 13);
+
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution: '&copy; OpenStreetMap contributors'
+            }
+        ).addTo(map);
+
+        async function loadBuildings() {
+            const response = await fetch('/api/buildings');
+            const data = await response.json();
+
+            data.forEach(item => {
+                const geo = JSON.parse(item.geometry);
+
+                L.geoJSON(geo).addTo(map);
+            });
+        }
+
+        async function loadRoads() {
+            const response = await fetch('/api/roads');
+            const data = await response.json();
+
+            data.forEach(item => {
+                const geo = JSON.parse(item.geometry);
+
+                L.geoJSON(geo).addTo(map);
+            });
+        }
+
+        loadBuildings();
+        loadRoads();
+    </script>
+</body>
+</html>
